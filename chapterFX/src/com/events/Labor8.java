@@ -4,19 +4,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
 import java.util.*;
 
-public class ButtonExample {
+public class Labor8 {
     public static void main(String[] args) {
         // 创建窗口、按钮和文本框
-        JFrame frame = new JFrame("按钮示例");
+        JFrame frame = new JFrame("别报错了");
         JButton button = new JButton("从小到大");
         JButton button1 = new JButton("从大到小");
         JButton button2 = new JButton("加法");
+        JButton button3 = new JButton("减法");
+        JButton button4 = new JButton("乘法");
+        JButton button5 = new JButton("除法");
         JTextField inputField = new JTextField(16);
         JTextField outputField = new JTextField(16);
         JLabel errorLabel = new JLabel();
-
         // 创建面板，并设置布局为GridBagLayout
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
@@ -33,7 +36,7 @@ public class ButtonExample {
         // 设置输出文本框的约束
         constraints.gridy = 2;
         constraints.fill = GridBagConstraints.NONE;
-        panel.add(new JLabel("排序后结果:"), constraints);
+        panel.add(new JLabel("运算结果:"), constraints);
 
         constraints.gridy = 3;
         constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -45,8 +48,6 @@ public class ButtonExample {
         constraints.anchor = GridBagConstraints.CENTER; // 设置按钮居中对齐
         constraints.insets = new Insets(10, 0, 10, 0); // 设置按钮上下边距
         panel.add(button, constraints);
-
-        //
         constraints.gridx = 1;
         constraints.insets = new Insets(10, 5, 10, 10); // 设置按钮上下边距和右边距
         panel.add(button1, constraints);
@@ -54,6 +55,13 @@ public class ButtonExample {
         constraints.gridy = 6;
         constraints.insets = new Insets(10, 5, 10, 10);
         panel.add(button2,constraints);
+        constraints.gridx = 1;
+        panel.add(button3,constraints);
+        constraints.gridy = 7;
+        constraints.gridx = 0;
+        panel.add(button4,constraints);
+        constraints.gridx = 1;
+        panel.add(button5,constraints);
 
         // 设置错误提示的约束
         constraints.gridy = 5;
@@ -61,7 +69,7 @@ public class ButtonExample {
         constraints.insets = new Insets(0, 0, 10, 0); // 设置错误提示下边距
         panel.add(errorLabel, constraints);
 
-        // 注册按钮点击事件的监听器
+        // 从小到大的按钮的响应
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // 获取输入文本框的值并进行排序和去重
@@ -80,6 +88,7 @@ public class ButtonExample {
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                     validInput = false;
                 }
+
 
                 if (validInput) {
                     Arrays.sort(fractions);
@@ -135,13 +144,12 @@ public class ButtonExample {
                             int b = o1.getDemonitor();
                             int c = o2.getNumerator();
                             int d = o2.getDemonitor();
-                            int newNumerator = a*c-b*d;
-                            int newDemonitor = b*d;
-                            if(newNumerator>0) {
-                                bo = 1;
-                            }
-                            if(newNumerator<0){
+                            double result = (double) a/b - (double) c/d;
+                            if(result>0) {
                                 bo = -1;
+                            }
+                            if(result<0){
+                                bo = 1;
                             }
                             return bo;
                         }
@@ -182,20 +190,113 @@ public class ButtonExample {
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                     validInput = false;
                 }
-//              for(int i=0;i<fractions.length;i++){
-//                  int a = fractions[i].getNumerator();
-//                  int b = fractions[i].getDemonitor();
-//                  int c = fractions[i+1].getDemonitor();
-//                  int d = fractions[i+1].getNumerator();
-//                  int newNumberator = a*c+b*d;
-//                  int newDemonitor = b*c;
-//                  Rational rational = new Rational();
-//                  rational.setDemonitor(newDemonitor);
-//                  rational.setNumerator(newNumberator);
-//              }
-                for(int i=0;i<fractions.length;i++){
-                    fractions[i].add(fractions[i+1]);
-                    
+              if(validInput){
+                  for(int i=0;i<fractions.length-1;i++){
+                   fractions[i+1] =  fractions[i].add(fractions[i+1]);
+                  }
+                  StringBuilder sortedFractions = new StringBuilder();
+                  sortedFractions.append(fractions[fractions.length-1]);
+                  outputField.setText(sortedFractions.toString());
+                  errorLabel.setText(""); // 清空错误提示
+              }else {
+                  errorLabel.setText("你的输入有误");
+              }
+            }
+        });
+        //减法按钮的响应
+        button3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String inputValue = inputField.getText().trim();
+                String[] numbers = inputValue.split(",");
+                Rational[] fractions = new Rational[numbers.length];
+
+                boolean validInput = true;
+                try {
+                    for (int i = 0; i < numbers.length; i++) {
+                        String[] fractionParts = numbers[i].split("/");
+                        int numerator = Integer.parseInt(fractionParts[0]);
+                        int denominator = Integer.parseInt(fractionParts[1]);
+                        fractions[i] = new Rational(numerator, denominator);
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+                    validInput = false;
+                }
+                if(validInput){
+                    for(int i=0;i<fractions.length-1;i++){
+                        fractions[i+1] =  fractions[i].sub(fractions[i+1]);
+                    }
+                    StringBuilder sortedFractions = new StringBuilder();
+                    sortedFractions.append(fractions[fractions.length-1]);
+                    outputField.setText(sortedFractions.toString());
+                    errorLabel.setText(""); // 清空错误提示
+                }else {
+                    errorLabel.setText("你的输入有误");
+                }
+            }
+        });
+        //乘法按钮的响应
+        button4.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputValue = inputField.getText().trim();
+                String[] numbers = inputValue.split(",");
+                Rational[] fractions = new Rational[numbers.length];
+
+                boolean validInput = true;
+                try {
+                    for (int i = 0; i < numbers.length; i++) {
+                        String[] fractionParts = numbers[i].split("/");
+                        int numerator = Integer.parseInt(fractionParts[0]);
+                        int denominator = Integer.parseInt(fractionParts[1]);
+                        fractions[i] = new Rational(numerator, denominator);
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+                    validInput = false;
+                }
+                if(validInput){
+                    for(int i=0;i<fractions.length-1;i++){
+                        fractions[i+1] =  fractions[i].muti(fractions[i+1]);
+                    }
+                    StringBuilder sortedFractions = new StringBuilder();
+                    sortedFractions.append(fractions[fractions.length-1]);
+                    outputField.setText(sortedFractions.toString());
+                    errorLabel.setText(""); // 清空错误提示
+                }else {
+                    errorLabel.setText("你的输入有误");
+                }
+            }
+        });
+        //除法按钮的响应
+        button5.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputValue = inputField.getText().trim();
+                String[] numbers = inputValue.split(",");
+                Rational[] fractions = new Rational[numbers.length];
+
+                boolean validInput = true;
+                try {
+                    for (int i = 0; i < numbers.length; i++) {
+                        String[] fractionParts = numbers[i].split("/");
+                        int numerator = Integer.parseInt(fractionParts[0]);
+                        int denominator = Integer.parseInt(fractionParts[1]);
+                        fractions[i] = new Rational(numerator, denominator);
+                    }
+                } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+                    validInput = false;
+                }
+                if(validInput){
+                    for(int i=0;i<fractions.length-1;i++){
+                        fractions[i+1] =  fractions[i].div(fractions[i+1]);
+                    }
+                    StringBuilder sortedFractions = new StringBuilder();
+                    sortedFractions.append(fractions[fractions.length-1]);
+                    outputField.setText(sortedFractions.toString());
+                    errorLabel.setText(""); // 清空错误提示
+                }else {
+                    errorLabel.setText("你的输入有误");
                 }
             }
         });
@@ -216,6 +317,19 @@ class Rational implements Comparable<Rational> {
     public Rational(int numerator, int demonitor) {
         this.numerator = numerator;
         this.demonitor = demonitor;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rational rational = (Rational) o;
+        return numerator == rational.numerator && demonitor == rational.demonitor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numerator, demonitor);
     }
 
     public Rational() {
@@ -270,8 +384,8 @@ class Rational implements Comparable<Rational> {
         int newNumerator = numerator*b+demonitor*a;
         int newDemonitor = demonitor*b;
         Rational result = new Rational();
-         result.setDemonitor(newDemonitor);
         result.setNumerator(newNumerator);
+        result.setDemonitor(newDemonitor);
         return result;
     }
 
@@ -281,8 +395,8 @@ class Rational implements Comparable<Rational> {
         int newNumerator = numerator* b- demonitor*a;
         int newDemonitor = demonitor*b;
         Rational result = new Rational();
-        result.setDemonitor(newDemonitor);
         result.setNumerator(newNumerator);
+        result.setDemonitor(newDemonitor);
         return result;
     }
 
@@ -292,8 +406,8 @@ class Rational implements Comparable<Rational> {
         int newNumerator = numerator*a;
         int newDemonitor = demonitor*b;
         Rational result = new Rational();
-        result.setDemonitor(newDemonitor);
         result.setNumerator(newNumerator);
+        result.setDemonitor(newDemonitor);
         return result;
     }
 
@@ -303,8 +417,8 @@ class Rational implements Comparable<Rational> {
         int newNumerator = numerator*b;
         int newDemonitor = demonitor*a;
         Rational result = new Rational();
-        result.setDemonitor(newDemonitor);
         result.setNumerator(newNumerator);
+        result.setDemonitor(newDemonitor);
         return result;
     }
 
@@ -335,16 +449,40 @@ class Rational implements Comparable<Rational> {
         int bo = 0;
         int a = r.getNumerator();
         int b = r.getDemonitor();
-        int newNumerator = numerator*a - demonitor*b;
-        int newDemonitor = demonitor*b;
-        if(newNumerator>0) {
-            bo = -1;
-        }
-        if(newNumerator<0){
+        double result = calculateValue()-r.calculateValue();
+        if(result>0) {
             bo = 1;
+        }
+        if(result<0){
+            bo = -1;
         }
         return bo;
     }
+    public double calculateValue() {
+        return (double) numerator / demonitor;
+    }
+//    public int compareTo(Rational r){
+//        int n=this.demonitor*r.demonitor;
+//        r.numerator=r.numerator*this.demonitor;
+//        this.numerator=r.demonitor*this.numerator;
+//        if(n<0){
+//            if(this.numerator>r.numerator){
+//                return -1;
+//            }else if(this.numerator<r.numerator){
+//                return 1;
+//            }else{
+//                return 0;
+//            }
+//        }else{
+//            if(this.numerator>r.numerator){
+//                return 1;
+//            }else if(this.numerator<r.numerator){
+//                return -1;
+//            }else{
+//                return 0;
+//            }
+//        }
+//    }
 }
 
 
